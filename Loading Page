@@ -1,0 +1,108 @@
+# -*- coding: utf-8 -*-
+"""
+Harshita's Birthday Countdown + Secret Code Unlock + Image Display
+"""
+
+import streamlit as st
+from datetime import datetime
+from streamlit_autorefresh import st_autorefresh
+from PIL import Image
+import os
+
+# Streamlit page config
+st.set_page_config(page_title="Harshita's 21st Birthday!", page_icon="🎂", layout="centered")
+
+# --- Auto-refresh (only once, to avoid wiping input fields) ---
+st_autorefresh(interval=1000, limit=1, key="countdown_and_slideshow")
+
+# --- Dates ---
+birthday = datetime(2025, 12, 21, 0, 0, 0)
+start_date = datetime(2025, 1, 1)
+now = datetime.now()
+countdown = birthday - now
+total_duration = birthday - start_date
+
+# --- Progress Bar ---
+progress = (now - start_date).total_seconds() / total_duration.total_seconds()
+progress = min(max(progress, 0), 1)
+
+# --- Header ---
+st.markdown("<h1 style='text-align: center; color: #D6336C;'>🎉 Harshita's 21st Birthday 🎉</h1>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center; color: #F25F5C;'>Countdown to Her Special Day</h3>", unsafe_allow_html=True)
+
+# --- Countdown + Progress ---
+st.markdown("### ⏳ Time Until December 21, 2025")
+st.progress(progress)
+st.markdown(f"**{progress*100:.2f}%** of the journey to Harshita’s birthday completed! 🎈")
+
+if countdown.total_seconds() > 0:
+    days = countdown.days
+    hours = countdown.seconds // 3600
+    minutes = (countdown.seconds % 3600) // 60
+
+    st.markdown(
+        f"<h2 style='text-align: center; color: #FF6F91;'>"
+        f"{days} day{'s' if days != 1 else ''}, {hours} hour{'s' if hours != 1 else ''}, and {minutes} minute{'s' if minutes != 1 else ''} left!"
+        f"</h2>", unsafe_allow_html=True)
+else:
+    st.markdown("<h2 style='text-align: center; color: #FF6F91;'>🎂 Today is your day! Happy 21st Birthday! 🎂</h2>", unsafe_allow_html=True)
+    st.balloons()
+
+# --- Lock Animation Section ---
+st.markdown("---")
+st.markdown("<h3 style='text-align: center;'>🔐 Enter the Secret Code to Unlock a Surprise</h3>", unsafe_allow_html=True)
+
+# Lock Swing Animation
+st.markdown("""
+<div style='text-align: center;'>
+    <span style='font-size: 90px; display: inline-block; animation: swing 2s infinite;'>🔒</span>
+</div>
+
+<style>
+@keyframes swing {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(10deg); }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(-10deg); }
+  100% { transform: rotate(0deg); }
+}
+</style>
+""", unsafe_allow_html=True)
+
+# Bounce animation for the input box
+st.markdown("""
+<style>
+.bounce-in {
+  animation: dropbounce 1s ease;
+}
+@keyframes dropbounce {
+  0%   { transform: translateY(-100px); opacity: 0; }
+  60%  { transform: translateY(10px); opacity: 1; }
+  100% { transform: translateY(0); }
+}
+</style>
+""", unsafe_allow_html=True)
+
+# --- Code Input Field ---
+st.markdown('<div class="bounce-in">', unsafe_allow_html=True)
+code_input = st.text_input("🔢 Enter 4-digit Secret Code", type="password", max_chars=4)
+st.markdown('</div>', unsafe_allow_html=True)
+
+correct_code = "2103"
+
+if code_input:
+    if code_input == correct_code:
+        st.success("🔓 Unlocked! You're amazing for figuring it out. 💖")
+        st.markdown("**More surprises coming soon... but that’s all you get for now 😉**")
+        st.balloons()
+    else:
+        st.error("❌ That's not the right code. Try again?")
+
+# --- Show MANCHURIAN.jpg at the bottom ---
+image_path = "C:/Users/nikhi/Documents/Scripts/Harshita21/MANCHURIAN.jpg"
+if os.path.exists(image_path):
+    image = Image.open(image_path)
+    st.markdown("---")
+    st.image(image, caption="Your Favourite 😉", use_column_width=True)
+else:
+    st.warning("Couldn't find MANCHURIAN.jpg at the path you provided.")
